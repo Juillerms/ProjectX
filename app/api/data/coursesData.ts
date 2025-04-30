@@ -1,43 +1,41 @@
-// app/data/coursesData.ts
-import { prisma } from "@/lib/prisma";
-import { Course } from "@/components/CourseGrid";
+import { PrismaClient } from '@prisma/client';
 
-// Dados estáticos
-export const staticCourses: Course[] = [
-  {
-    id: 1,
-    title: "Introduction to Web Development",
-    description: "Learn HTML, CSS, and JavaScript fundamentals for modern web development.",
-  },
-  {
-    id: 2,
-    title: "React Fundamentals",
-    description: "Master React.js concepts and build interactive user interfaces.",
-  },
-  {
-    id: 3,
-    title: "Backend Development with Node.js",
-    description: "Create robust server applications using Node.js and Express.",
-  },
-  {
-    id: 4,
-    title: "Database Design & SQL",
-    description: "Design efficient databases and write complex SQL queries.",
-  },
-  {
-    id: 5,
-    title: "Full-Stack Development",
-    description: "Combine frontend and backend skills to build complete applications.",
+// Singleton pattern para o PrismaClient
+let prisma: PrismaClient;
+
+if (process.env.NODE_ENV === 'production') {
+  prisma = new PrismaClient();
+} else {
+  if (!(global as any).prisma) {
+    (global as any).prisma = new PrismaClient();
   }
-];
-
-// Busca do banco
-export async function getCoursesFromDatabase() {
-  return await prisma.curso.findMany({ orderBy: { id: "asc" } });
+  prisma = (global as any).prisma;
 }
 
-// Combinação
-export async function getCombinedCourses() {
-  const databaseCourses = await getCoursesFromDatabase();
-  return [...staticCourses, ...databaseCourses];
+export interface CourseData {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  duration: number;
+  createdAt: Date;
+}
+
+// Função para buscar cursos do banco de dados e convertê-los para o formato esperado
+export async function getCombinedCourses(): Promise<CourseData[]> {
+  try {
+    const dbCursos = await prisma.curso.findMany();
+    
+    return dbCursos.map(curso => ({
+      id: curso.id,
+      title: `Curso de ${curso.tempo} horas`,
+      description: curso.descricao,
+      imageUrl: "/images/placeholder.jpg", // Imagem padrão
+      duration: curso.tempo,
+      createdAt: curso.createdAt
+    }));
+  } catch (error) {
+    console.error("Error fetching courses from database:", error);
+    return [];
+  }
 }

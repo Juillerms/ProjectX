@@ -1,4 +1,3 @@
-// app/grid_courses/page.tsx
 import CourseGrid from "@/components/CourseGrid"
 import { getCombinedCourses } from "../api/data/coursesData";
 
