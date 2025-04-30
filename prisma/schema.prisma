@@ -6,10 +6,17 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../lib/generated/prisma"
 }
+
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+}
+
+model Curso {
+  id        Int      @id @default(autoincrement())
+  tempo     Int
+  descricao String
+  createdAt DateTime @default(now())
 }
