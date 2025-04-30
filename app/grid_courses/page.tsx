@@ -1,12 +1,11 @@
 // app/grid_courses/page.tsx
-import CourseGrid from "@/components/CourseGrid";
-import { coursesData } from "../api/data/coursesData";
+import CourseGrid from "@/components/CourseGrid"
+import { getCombinedCourses } from "../api/data/coursesData";
 
-export default function GridCoursesPage() {
-  // Aqui você poderia filtrar os cursos, buscar da API, etc.
-  // Por exemplo, vamos pegar apenas os 6 primeiros cursos
-  const featuredCourses = coursesData.slice(0, 6);
-  
+export default async function GridCoursesPage() {
+  const allCourses = await getCombinedCourses();
+  const featuredCourses = allCourses.slice(0, 6);
+
   return (
     <main className="flex-1">
       <section className="w-full py-12 md:py-24">
@@ -21,7 +20,6 @@ export default function GridCoursesPage() {
               </p>
             </div>
 
-            {/* Usando o mesmo componente de grid, mas com dados diferentes */}
             <CourseGrid courses={featuredCourses} />
             
             <div className="mt-8 text-center">

@@ -1,4 +1,8 @@
-import React from 'react';
+// Remova essa linha se não for usar:
+// import { useEffect, useLayoutEffect } from "react";
+
+import { useEffect } from "react"; // Se você usar useEffect em algum lugar
+// ou remova tudo se nenhum for usado
 
 // Definindo a interface para um curso
 export interface Course {
